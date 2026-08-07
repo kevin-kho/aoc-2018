@@ -120,6 +120,36 @@ func SolvePartOne(claims []Claim) int {
 
 }
 
+func SolvePartTwo(claims []Claim) Claim {
+
+	var res Claim
+
+	mp := make(map[Coordinate][]Claim)
+	overlappingClaim := make(map[Claim]bool)
+
+	for _, c := range claims {
+		for _, coord := range c.GetCoordinates() {
+			if len(mp[coord]) > 0 {
+				if len(mp[coord]) == 1 {
+					overlappingClaim[mp[coord][0]] = true
+				}
+				overlappingClaim[c] = true
+			}
+			mp[coord] = append(mp[coord], c)
+		}
+	}
+
+	for _, c := range claims {
+		if !overlappingClaim[c] {
+			res = c
+		}
+
+	}
+
+	return res
+
+}
+
 func main() {
 	data, err := common.ReadInput("input.txt")
 	if err != nil {
@@ -133,5 +163,8 @@ func main() {
 
 	res := SolvePartOne(claims)
 	fmt.Println(res)
+
+	res2 := SolvePartTwo(claims)
+	fmt.Println(res2)
 
 }
