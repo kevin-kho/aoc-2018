@@ -46,6 +46,26 @@ func GetEntries(data []byte) []Entry {
 	return res
 }
 
+func StringsDifferByOne(str0 string, str1 string) bool {
+	i := 0
+	var diffSeen bool
+	for i < len(str0) {
+
+		if str0[i] != str1[i] {
+			if diffSeen {
+				return false
+			}
+			diffSeen = true
+		}
+
+		i++
+
+	}
+
+	return diffSeen
+
+}
+
 func SolvePartOne(entries []Entry) int {
 	var twoCount int
 	var threeCount int
@@ -64,6 +84,23 @@ func SolvePartOne(entries []Entry) int {
 	return twoCount * threeCount
 }
 
+func SolvePartTwo(entries []Entry) string {
+	var res string
+
+	for i := range entries {
+		for j := i + 1; j < len(entries); j++ {
+			diffByOne := StringsDifferByOne(entries[i].Id, entries[j].Id)
+			if diffByOne {
+				fmt.Println(entries[i].Id, entries[j].Id)
+			}
+
+		}
+
+	}
+
+	return res
+}
+
 func main() {
 	data, err := common.ReadInput("input.txt")
 	if err != nil {
@@ -75,5 +112,8 @@ func main() {
 
 	res := SolvePartOne(entries)
 	fmt.Println(res)
+
+	res2 := SolvePartTwo(entries)
+	fmt.Println(res2)
 
 }
