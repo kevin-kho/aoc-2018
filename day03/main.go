@@ -97,6 +97,29 @@ func GetClaims(data []byte) ([]Claim, error) {
 
 }
 
+func SolvePartOne(claims []Claim) int {
+	var res int
+	var coords []Coordinate
+	mp := make(map[Coordinate]int)
+
+	for _, c := range claims {
+		coords = append(coords, c.GetCoordinates()...)
+	}
+
+	for _, c := range coords {
+		mp[c]++
+	}
+
+	for _, ct := range mp {
+		if ct > 1 {
+			res += 1
+		}
+	}
+
+	return res
+
+}
+
 func main() {
 	data, err := common.ReadInput("input.txt")
 	if err != nil {
@@ -107,6 +130,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(claims)
+
+	res := SolvePartOne(claims)
+	fmt.Println(res)
 
 }
