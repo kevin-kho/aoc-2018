@@ -18,6 +18,31 @@ type Claim struct {
 	Length     int // y
 }
 
+type Coordinate struct {
+	X int
+	Y int
+}
+
+func (c Claim) GetCoordinates() []Coordinate {
+	var res []Coordinate
+	x := c.LeftOffset
+	y := c.TopOffset
+
+	for dx := range c.Width {
+		for dy := range c.Length {
+			c := Coordinate{
+				X: x + dx,
+				Y: y + dy,
+			}
+			res = append(res, c)
+
+		}
+	}
+
+	return res
+
+}
+
 func GetClaims(data []byte) ([]Claim, error) {
 
 	var res []Claim
