@@ -85,20 +85,22 @@ func SolvePartOne(entries []Entry) int {
 }
 
 func SolvePartTwo(entries []Entry) string {
-	var res string
+	var res []byte
 
 	for i := range entries {
 		for j := i + 1; j < len(entries); j++ {
 			diffByOne := StringsDifferByOne(entries[i].Id, entries[j].Id)
 			if diffByOne {
-				fmt.Println(entries[i].Id, entries[j].Id)
+				for z := range entries[i].Id {
+					if entries[i].Id[z] == entries[j].Id[z] {
+						res = append(res, entries[i].Id[z])
+					}
+				}
 			}
-
 		}
-
 	}
 
-	return res
+	return string(res)
 }
 
 func main() {
