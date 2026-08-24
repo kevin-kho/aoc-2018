@@ -18,6 +18,39 @@ type Entry struct {
 	Action    string
 }
 
+type GuardSleep struct {
+	Guard                    int
+	SleepMinuteFreq          map[int]int
+	MostFreqSleptMinute      int
+	MostFreqSleptMinuteCount int
+}
+
+func (g *GuardSleep) GetHighestSleptMinute() {
+	maxMinute := -1
+	maxCt := -1
+	for minute, ct := range g.SleepMinuteFreq {
+		if ct > maxCt {
+			maxMinute = minute
+			maxCt = ct
+		}
+	}
+
+	g.MostFreqSleptMinute = maxMinute
+	g.MostFreqSleptMinuteCount = maxCt
+}
+
+func CreateGuardSleep(guard int, sleepMinutes []int) GuardSleep {
+	mp := make(map[int]int)
+	for _, minute := range sleepMinutes {
+		mp[minute]++
+	}
+
+	return GuardSleep{
+		Guard:           guard,
+		SleepMinuteFreq: mp,
+	}
+}
+
 func ParseData(data []byte) ([]Entry, error) {
 	var res []Entry
 
@@ -141,6 +174,56 @@ func SolvePartOne(entries []Entry) int {
 
 }
 
+func SolvePartTwo(entries []Entry, minute int) int {
+
+	guardSleepMinutes := make(map[int][]int)
+	currGuard := 0
+	var sleepStart time.Time
+	for _, entry := range entries {
+		if entry.Action == "begins shift" {
+			currGuard = entry.Guard
+		}
+
+		if entry.Action == "falls asleep" {
+			sleepStart = entry.Timestamp
+		}
+
+		if entry.Action == "wakes up" {
+			sleepStartMinute := sleepStart.Minute()
+			sleepMinutes := entry.Timestamp.Sub(sleepStart).Minutes()
+
+			var minutes []int
+			for i := sleepStartMinute; i < sleepStartMinute+int(sleepMinutes); i++ {
+				minutes = append(minutes, i%60)
+			}
+
+			guardSleepMinutes[currGuard] = append(guardSleepMinutes[currGuard], minutes...)
+
+		}
+
+	}
+
+	var gs []GuardSleep
+	for guard, minutes := range guardSleepMinutes {
+		g := CreateGuardSleep(guard, minutes)
+		g.GetHighestSleptMinute()
+		gs = append(gs, g)
+	}
+
+	var res int
+	var maxCt int
+	for _, guardSleep := range gs {
+		if guardSleep.MostFreqSleptMinuteCount > maxCt {
+			maxCt = guardSleep.MostFreqSleptMinuteCount
+			res = guardSleep.Guard * guardSleep.MostFreqSleptMinute
+		}
+
+	}
+
+	return res
+
+}
+
 func main() {
 	data, err := common.ReadInput("input.txt")
 	if err != nil {
@@ -155,5 +238,8 @@ func main() {
 
 	res := SolvePartOne(entries)
 	fmt.Println(res)
+
+	res2 := SolvePartTwo(entries, 45)
+	fmt.Println(res2)
 
 }
