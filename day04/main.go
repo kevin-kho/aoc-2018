@@ -72,10 +72,10 @@ func ParseData(data []byte) ([]Entry, error) {
 	return res, nil
 }
 
-func SolvePartOne(entries []Entry) float64 {
+func SolvePartOne(entries []Entry) int {
 
+	// Determines guard that sleeps the most
 	guardSleep := make(map[int]float64)
-
 	currGuard := 0
 	var sleepStart time.Time
 	for _, entry := range entries {
@@ -96,7 +96,6 @@ func SolvePartOne(entries []Entry) float64 {
 
 	var guard int
 	var maxSleep float64
-
 	for g, sleepDuration := range guardSleep {
 		if sleepDuration > maxSleep {
 			maxSleep = sleepDuration
@@ -104,7 +103,41 @@ func SolvePartOne(entries []Entry) float64 {
 		}
 	}
 
-	return maxSleep * float64(guard)
+	// Determines guard's most slept minute
+	guardMinuteFreq := make(map[int]int)
+	currGuard = 0
+	for _, entry := range entries {
+		if entry.Action == "begins shift" {
+			currGuard = entry.Guard
+		}
+
+		if entry.Action == "falls asleep" && currGuard == guard {
+			sleepStart = entry.Timestamp
+		}
+
+		if entry.Action == "wakes up" && currGuard == guard {
+			sleepStartMinute := sleepStart.Minute()
+			sleepMinutes := entry.Timestamp.Sub(sleepStart).Minutes()
+			guardMinuteFreq[sleepStartMinute]++ // Time 0
+			for range int(sleepMinutes) - 1 {
+				sleepStartMinute++
+				sleepStartMinute = sleepStartMinute % 60
+				guardMinuteFreq[sleepStartMinute]++
+			}
+		}
+	}
+
+	maxMinute := 0
+	maxMinuteCt := 0
+	for minute, ct := range guardMinuteFreq {
+		if ct > maxMinuteCt {
+			maxMinuteCt = ct
+			maxMinute = minute
+		}
+
+	}
+
+	return guard * maxMinute
 
 }
 
