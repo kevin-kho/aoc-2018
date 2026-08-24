@@ -17,7 +17,7 @@ func SolvePartOne(data []byte) int {
 
 	for _, b := range data {
 
-		if len(stack) > 1 && (stack[len(stack)-1]-b == 32 || b-stack[len(stack)-1] == 32) {
+		if len(stack) > 0 && (stack[len(stack)-1]-b == 32 || b-stack[len(stack)-1] == 32) {
 			stack = stack[:len(stack)-1]
 			continue
 		}
