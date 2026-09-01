@@ -58,6 +58,22 @@ func TotalizeThreeByThree(p Pos, grid map[Pos]int) int {
 
 }
 
+func TotalizeMByM(p Pos, grid map[Pos]int, m int) int {
+	var total int
+	for x := p.X; x < p.X+m; x++ {
+		for y := p.Y; y < p.Y+3; y++ {
+			total += grid[Pos{
+				X: x,
+				Y: y,
+			}]
+
+		}
+	}
+
+	return total
+
+}
+
 func SolvePartOne(grid map[Pos]int) Pos {
 	var currMax int
 	var res Pos
@@ -81,12 +97,38 @@ func SolvePartOne(grid map[Pos]int) Pos {
 
 }
 
+func SolvePartTwo(grid map[Pos]int) Pos {
+	var currMax int
+	var res Pos
+	for x := 1; x < 301; x++ {
+		for y := 1; y < 301; y++ {
+			p := Pos{X: x, Y: y}
+			mMax := min(301-x, 301-y)
+
+			for m := 1; m < mMax+1; m++ {
+				val := TotalizeMByM(p, grid, m)
+				if val > currMax {
+					res = p
+					currMax = val
+				}
+
+			}
+		}
+	}
+
+	return res
+}
+
 func main() {
-	serialNumber := 8868
+	serialNumber := 18
 
 	mp := CreateGrid(serialNumber)
 
 	res := SolvePartOne(mp)
 	fmt.Println(res)
+
+	// // TLE
+	// res2 := SolvePartTwo(mp)
+	// fmt.Println(res2)
 
 }
