@@ -12,7 +12,7 @@ import (
 type Node struct {
 	ChildCount    int
 	MetadataCount int
-	ChildrenIdx   []int
+	ChildrenIdx   []int // Part1: Metadata values, Part2: Child Indexes if not a leaf node
 	Children      []*Node
 }
 
@@ -35,10 +35,6 @@ func GetIntArray(data []byte) ([]int, error) {
 	}
 
 	return res, nil
-
-}
-
-func CreateNodes(intArr []int) {
 
 }
 
@@ -85,6 +81,37 @@ func SolvePartOne(intArr []int) int {
 	}
 
 	return total
+
+}
+
+func SolvePartOneAlt(intArr []int) int {
+	var res int
+
+	root := BuildTree(intArr)
+
+	var dfs func(node *Node) int
+	dfs = func(node *Node) int {
+
+		// Exit condition: hit leaf node
+		if len(node.Children) == 0 {
+			return SumIntArr(node.ChildrenIdx)
+		}
+
+		// Add the Node
+		childSum := SumIntArr(node.ChildrenIdx)
+
+		// Add all the children's
+		for _, child := range node.Children {
+			childSum += dfs(child)
+		}
+
+		return childSum
+
+	}
+
+	res = dfs(root)
+
+	return res
 
 }
 
@@ -176,6 +203,9 @@ func main() {
 
 	res := SolvePartOne(intArr)
 	fmt.Println(res)
+
+	resAlt := SolvePartOneAlt(intArr)
+	fmt.Println(resAlt)
 
 	res2 := SolvePartTwo(intArr)
 	fmt.Println(res2)
