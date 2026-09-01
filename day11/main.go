@@ -125,7 +125,7 @@ func SolvePartTwo(grid map[Pos]int) Pos {
 	return res
 }
 
-// WIP; incorrect solution
+// Correct but slow
 func SolvePartTwoMemo(grid map[Pos]int) PosMemo {
 	// Build memo base case M = 1
 	memo := make(map[PosMemo]int)
@@ -167,7 +167,7 @@ func SolvePartTwoMemo(grid map[Pos]int) PosMemo {
 				X: p.X + 1,
 				Y: p.Y + 1,
 			},
-			M: min(301-(p.X+1), 301-(p.Y+1)),
+			M: p.M - 1,
 		})
 
 		// Memoize it and return value
@@ -194,13 +194,10 @@ func SolvePartTwoMemo(grid map[Pos]int) PosMemo {
 	}
 	return res
 
-	// recurse(PosMemo{Pos: Pos{X: 1, Y: 1}, M: min(301-1, 301-1)})
-	// return PosMemo{}
-
 }
 
 func main() {
-	serialNumber := 42
+	serialNumber := 8868
 
 	mp := CreateGrid(serialNumber)
 
@@ -211,6 +208,7 @@ func main() {
 	// res2 := SolvePartTwo(mp)
 	// fmt.Println(res2)
 
+	// Works but slow
 	res2 := SolvePartTwoMemo(mp)
 	fmt.Println(res2)
 
